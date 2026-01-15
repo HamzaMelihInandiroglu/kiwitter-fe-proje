@@ -1,67 +1,53 @@
-import queryString from "query-string";
-import AuthLayout from "./AuthLayout";
-import { useLocation } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { setUser } from "./auth";
 
 export default function Login() {
-  const { search } = useLocation();
-  const values = queryString.parse(search);
-  console.log(values.expiresIn, "***");
+  const nav = useNavigate();
+  const [name, setName] = useState("");
+  const [nick, setNick] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    mode: "onChange",
-  });
+  function handleLogin() {
+    const n = name.trim();
+    const k = nick.trim();
+    if (!n || !k) return;
 
-  function handleLogin(data) {
-    console.log(data, "---");
+    const avatar = `https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(k)}`;
+
+    setUser({ name: n, nick: k, avatar });
+    nav("/");
   }
 
   return (
-    <AuthLayout>
-      <h1 className="text-3xl text-center font-semibold tracking-tighter text-lime-700">
-        Hoş Geldin!
-      </h1>
-      <form onSubmit={handleSubmit(handleLogin)}>
-        <div className="pt-4">
-          <div className="flex justify-between gap-2 items-baseline pb-1">
-            <label htmlFor="nickname ">Kullanıcı adı</label>
-            <span className="text-sm font-medium text-red-600">
-              {errors.nickname && errors.nickname.message.toString()}
-            </span>
-          </div>
-          <input
-            type="text"
-            className="w-full h-10 px-2 border rounded-md border-gray-300"
-            {...register("nickname", { required: "Bu alan zorunlu" })}
-          />
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 border">
+        <div className="text-2xl font-bold text-violet-800">Login</div>
+        <div className="text-slate-500 text-sm mt-1">
+          Tweet atmak için giriş yap.
         </div>
 
-        <div className="pt-4">
-          <div className="flex justify-between gap-2 items-baseline pb-1">
-            <label htmlFor="password">Şifre</label>
-            <span className="text-sm font-medium text-red-600">
-              {errors.password && errors.password.message.toString()}
-            </span>
-          </div>
+        <div className="mt-5 space-y-3">
           <input
-            type="password"
-            className="w-full h-10 px-2 border rounded-md border-gray-300"
-            {...register("password", { required: "Bu alan zorunlu" })}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="İsmin (ör: Hamza)"
+            className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-violet-300"
           />
-        </div>
-        <div className="pt-4">
+          <input
+            value={nick}
+            onChange={(e) => setNick(e.target.value)}
+            placeholder="Nick (ör: hamza123)"
+            className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-violet-300"
+          />
+
           <button
-            type="submit"
-            className="h-12 text-center block w-full rounded-lg bg-lime-700 text-white font-bold "
+            onClick={handleLogin}
+            className="w-full mt-2 px-4 py-3 rounded-xl bg-violet-700 text-white font-semibold hover:bg-violet-800"
           >
-            GİRİŞ
+            Giriş Yap
           </button>
         </div>
-      </form>
-    </AuthLayout>
+      </div>
+    </div>
   );
 }

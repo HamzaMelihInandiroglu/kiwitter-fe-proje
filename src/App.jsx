@@ -1,33 +1,22 @@
 import "./App.css";
-import { Switch, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import PageLayout from "./PageLayout";
 import Login from "./Login";
 import Signup from "./Signup";
+import Home from "./Home";
+import Profile from "./Profile";
 
-function App() {
+export default function App() {
   return (
-    <div>
-      <Switch>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/signup">
-          <Signup />
-        </Route>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
 
-        <Route path="/" exact>
-          {/* /?variant=most_liked */}
-          <PageLayout>Home</PageLayout>
-        </Route>
-        <Route path="/profile/:nick">
-          <PageLayout>Profile page</PageLayout>
-        </Route>
-        <Route path="/detail/:twitId">
-          <PageLayout>Twit detail</PageLayout>
-        </Route>
-      </Switch>
-    </div>
+      <Route path="/" element={<PageLayout><Home /></PageLayout>} />
+      <Route path="/profile/:nick" element={<PageLayout><Profile /></PageLayout>} />
+      <Route path="/detail/:twitId" element={<PageLayout>Twit detail</PageLayout>} />
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
-
-export default App;
